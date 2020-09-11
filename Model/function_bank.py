@@ -5,6 +5,8 @@ import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
 import torch.optim as optim
+import math
+import glob
 
 def read_cfg_file(cfgfile):
     file = open(cfgfile, 'r')
@@ -45,3 +47,20 @@ def IoU(x_GT, y_GT, w_GT, h_GT, x_PD, y_PD, w_PD, h_PD):
 
 def axis_conversion(x_centre, y_centre, h, w):
     return (x_centre - h / 2, y_centre - w / 2, h, w)
+	
+	
+	
+def image_reader(image_path_list):
+    from PIL import Image
+    import numpy as np
+    final_output_array = []
+    for image_path in image_path_list:
+        image = Image.open(image_path)
+        image = image.resize((608, 608))
+        image = np.array(image)
+        image_array = np.array([0 for i in range(3 * 608 * 608)]).reshape(3, 608, 608)
+        for i in range(3):
+            image_array[i] = image[:, :, i]
+        #print(image_array.shape)
+        final_output_array.append(image_array)
+    return np.array(final_output_array)
