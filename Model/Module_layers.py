@@ -342,7 +342,7 @@ class YOLO_v4_model(nn.Module):
 
 #all_layerrr
 
-class transfer_learning_model(nn.Module):
+class transfer_learning_model_backup(nn.Module):
     def __init__(self):
         super().__init__()
         self.anchors = [12, 16, 19, 36, 40, 28, 36, 75, 76, 55, 72, 146, 142, 110, 192, 243, 459, 401]
@@ -397,4 +397,62 @@ class transfer_learning_model(nn.Module):
         out_19_1 = self.Conv_Layer_19_b(out_19_1)
         out_19_1 = self.Yolo_Layer_19(out_19_1)
         #another option: only use 1 conv layer b, and Yolo layer
+        return out_76_1, out_38_1, out_19_1
+		
+
+#all_layerrr
+
+class transfer_learning_model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.anchors = [12, 16, 19, 36, 40, 28, 36, 75, 76, 55, 72, 146, 142, 110, 192, 243, 459, 401]
+        self.mask_a = [0, 1, 2]
+        self.mask_b = [3, 4, 5]
+        self.mask_c = [6, 7, 8]
+        #self.TL_model_list = nn.ModuleList()
+        #TL_model_list.append(Conv_Layer_box(in_channel = 256, out_channel = 255, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalize = False))
+        self.Conv_Layer_76_a = Conv_Layer_box(in_channel = 256, out_channel = 255, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalization = False)
+        #
+        #self.norm_76 = nn.BatchNorm2d(255)
+        #self.Sigmoid_layer_76 = nn.Sigmoid()
+        #self.Conv_Layer_76_b = Conv_Layer_box(in_channel = 255, out_channel = 27, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalization = False)
+        #self.Yolo_Layer_76 = Yolo(self.anchors, self.mask_a, classes = 4, input_image_size = 608)
+        self.Yolo_Layer_76 = Yolo_TL(self.anchors, self.mask_a, classes = 4, input_image_size = 608)
+        
+        self.Conv_Layer_38_a = Conv_Layer_box(in_channel = 512, out_channel = 255, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalization = False)
+        #
+        #self.norm_38 = nn.BatchNorm2d(255)
+        #self.Sigmoid_layer_38 = nn.Sigmoid()
+        #self.Conv_Layer_38_b = Conv_Layer_box(in_channel = 255, out_channel = 27, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalization = False)
+        #self.Yolo_Layer_38 = Yolo(self.anchors, self.mask_b, classes = 4, input_image_size = 608)
+        self.Yolo_Layer_38 = Yolo_TL(self.anchors, self.mask_b, classes = 4, input_image_size = 608)
+        
+        self.Conv_Layer_19_a = Conv_Layer_box(in_channel = 1024, out_channel = 255, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalization = False)
+        #
+        #self.norm_19 = nn.BatchNorm2d(255)
+        #self.Sigmoid_layer_19 = nn.Sigmoid()
+        #self.Conv_Layer_19_b = Conv_Layer_box(in_channel = 255, out_channel = 27, kernel_size = 1, stride = 1, activation_func = 'linear', batch_normalization = False)
+        #self.Yolo_Layer_19 = Yolo(self.anchors, self.mask_c, classes = 4, input_image_size = 608)
+        self.Yolo_Layer_19 = Yolo_TL(self.anchors, self.mask_c, classes = 4, input_image_size = 608)
+        
+    def forward(self, layer_137_out, layer_148_out, layer_159_out):
+        out_76_1 = self.Conv_Layer_76_a(layer_137_out)
+        #out_76_1 = self.norm_76(out_76_1)
+        #out_76_1 = self.Sigmoid_layer_76(out_76_1)
+        #out_76_1 = self.Conv_Layer_76_b(out_76_1)
+        out_76_1 = self.Yolo_Layer_76(out_76_1)
+        
+        out_38_1 = self.Conv_Layer_38_a(layer_148_out)
+        #out_38_1 = self.norm_76(out_38_1)
+        #out_38_1 = self.Sigmoid_layer_38(out_38_1)
+        #out_38_1 = self.Conv_Layer_38_b(out_38_1)
+        out_38_1 = self.Yolo_Layer_38(out_38_1)
+        
+        out_19_1 = self.Conv_Layer_19_a(layer_159_out)
+        #out_19_1 = self.norm_76(out_19_1)
+        #out_19_1 = self.Sigmoid_layer_19(out_19_1)
+        #out_19_1 = self.Conv_Layer_19_b(out_19_1)
+        out_19_1 = self.Yolo_Layer_19(out_19_1)
+        #another option: only use 1 conv layer b, and Yolo layer
+        
         return out_76_1, out_38_1, out_19_1

@@ -7,6 +7,7 @@ import numpy as np
 import torch.optim as optim
 import math
 import glob
+from PIL import ImageTk, Image
 
 def read_cfg_file(cfgfile):
     file = open(cfgfile, 'r')
@@ -64,3 +65,15 @@ def image_reader(image_path_list):
         #print(image_array.shape)
         final_output_array.append(image_array)
     return np.array(final_output_array)
+	
+	
+	
+def read_image(image_file_path_list):
+    image_array_list = []
+    for image_file_path in image_file_path_list:
+        image = Image.open(image_file_path)
+        image_data = image.getdata()
+        image_array = np.array(image_data)
+        image_array_list.append(image_array)
+    return image_array_list
+#best IOU anchor
